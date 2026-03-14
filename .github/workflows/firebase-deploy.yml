@@ -11,10 +11,10 @@ env: #globales
   NODE_VERSION: "22.21.1"
 
 jobs:
-  test:
-    name: Tests
+  # JOB_3 BUILD
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,12 +22,13 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
           cache: 'npm'
       - run: npm ci
-      - name: Run tests with coverage
-        run: npm run test:coverage
-      - name: Coverage Report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Build App
+        run: npm run build
+        env: 
+          APP_VERSION: ${{vars.APP_VERSION || '1.0.0'}}
+      - name: Upload build artifact
+        uses: action/upload-artifact@v4
         with:
-          name: coverage-${{github.sha}}
-          path: coverage/
-          retention-days: 3
+          name: build-${{github.sha}}
+          path: dist/
+          retention-days: 5
